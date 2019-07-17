@@ -43,5 +43,21 @@
     "ts-node": "~7.0.0",
     "tslint": "~5.15.0",
     "typescript": "~3.4.3"
-  }
+  },
+  "description": "This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.1.1.",
+  "main": "src/main.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/karolbulwin/tour-of-heroes.git"
+  },
+  "keywords": [
+    "angular",
+    "app"
+  ],
+  "author": "Karol Bulwin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/karolbulwin/tour-of-heroes/issues"
+  },
+  "homepage": "https://github.com/karolbulwin/tour-of-heroes#readme"
 }
