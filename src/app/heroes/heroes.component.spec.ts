@@ -51,5 +51,15 @@ describe('HeroesComponent', () => {
         component.heroes.filter(hero => hero.id === heroToDelete.id).length
       ).toBe(0);
     });
+
+    it('should call deleteHero with the indicated hero', () => {
+      mockHeroService.deleteHero.and.returnValue(of(true));
+      component.heroes = heroes;
+      const heroToDelete = heroes[1];
+
+      component.deleteHero(heroToDelete);
+
+      expect(mockHeroService.deleteHero).toHaveBeenCalledWith(heroToDelete);
+    });
   });
 });
