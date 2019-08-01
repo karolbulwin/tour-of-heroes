@@ -4,12 +4,13 @@ import { HeroesComponent } from './heroes.component';
 
 import { HEROES } from '../mock-heroes';
 import { of } from 'rxjs';
+import { Hero } from '../hero';
 // import { RouterTestingModule } from '@angular/router/testing';
 
 describe('HeroesComponent', () => {
   let component: HeroesComponent;
   // let fixture: ComponentFixture<HeroesComponent>;
-  let heroes;
+  let heroes: Hero[];
   let mockHeroService;
 
   // beforeEach(async(() => {
