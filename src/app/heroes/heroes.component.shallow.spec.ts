@@ -8,7 +8,7 @@ import { Hero } from '../hero';
 import { RouterTestingModule } from '@angular/router/testing';
 // import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { HeroService } from '../hero.service';
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 describe('HeroesComponent (shallow)', () => {
   let component: HeroesComponent;
@@ -21,6 +21,16 @@ describe('HeroesComponent (shallow)', () => {
     template: '<div></div>'
   })
   class FakeHeroCreateComponent {}
+
+  @Component({
+    selector: 'app-hero',
+    template: '<div></div>'
+  })
+  class FakeHeroComponent {
+    @Input() hero: Hero;
+    // @Output() deleteHero: EventEmitter<any> = new EventEmitter();
+  }
+
   // beforeEach(async(() => {
   //   TestBed.configureTestingModule({
   //     declarations: [HeroesComponent],
@@ -40,7 +50,11 @@ describe('HeroesComponent (shallow)', () => {
     ]);
 
     TestBed.configureTestingModule({
-      declarations: [HeroesComponent, FakeHeroCreateComponent],
+      declarations: [
+        HeroesComponent,
+        FakeHeroCreateComponent,
+        FakeHeroComponent
+      ],
       imports: [RouterTestingModule],
       providers: [{ provide: HeroService, useValue: mockHeroService }]
       // schemas: [NO_ERRORS_SCHEMA]
