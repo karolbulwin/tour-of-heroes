@@ -5,7 +5,7 @@ import { HeroesComponent } from './heroes.component';
 import { HEROES } from '../mock-heroes';
 import { of } from 'rxjs';
 import { Hero } from '../hero';
-import { RouterTestingModule } from '@angular/router/testing';
+// import { RouterTestingModule } from '@angular/router/testing';
 // import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { HeroService } from '../hero.service';
 import { Component, Input } from '@angular/core';
@@ -55,7 +55,7 @@ describe('HeroesComponent (shallow)', () => {
         FakeHeroCreateComponent,
         FakeHeroComponent
       ],
-      imports: [RouterTestingModule],
+      imports: [],
       providers: [{ provide: HeroService, useValue: mockHeroService }]
       // schemas: [NO_ERRORS_SCHEMA]
     });
