@@ -83,4 +83,42 @@ describe('HeroesComponent (shallow)', () => {
       });
     });
   });
+
+  describe('deleteHero method', () => {
+    it('should call heroService.deleteHero when the Hero Components delete button is clicked', () => {
+      spyOn(fixture.componentInstance, 'deleteHero');
+      mockHeroService.getHeroes.and.returnValue(of(heroes));
+      const mockStopPropagation = jasmine.createSpyObj(['stopPropagation']);
+
+      fixture.detectChanges();
+
+      const heroComponentDEs = fixture.debugElement.queryAll(
+        By.directive(HeroComponent)
+      );
+      heroComponentDEs[0]
+        .query(By.css('button'))
+        .triggerEventHandler('click', mockStopPropagation);
+      // {stopPropagation: () => {}}
+
+      expect(fixture.componentInstance.deleteHero).toHaveBeenCalledWith(
+        heroes[0]
+      );
+
+      // another version // raise event
+      (heroComponentDEs[1].componentInstance as HeroComponent).deleteHero.emit(
+        undefined
+      );
+
+      expect(fixture.componentInstance.deleteHero).toHaveBeenCalledWith(
+        heroes[1]
+      );
+
+      // another version // raise event using triggerEventHandler
+      heroComponentDEs[2].triggerEventHandler('deleteHero', null);
+
+      expect(fixture.componentInstance.deleteHero).toHaveBeenCalledWith(
+        heroes[2]
+      );
+    });
+  });
 });
