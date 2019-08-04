@@ -83,10 +83,6 @@ describe('HeroesComponent (deep)', () => {
     component = fixture.componentInstance;
   });
 
-  afterEach(() => {
-    heroes = [];
-  });
-
   it('should create', () => {
     expect(component).toBeTruthy();
   });
