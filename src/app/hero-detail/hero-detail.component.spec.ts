@@ -54,4 +54,16 @@ describe('HeroDetailComponent', () => {
       );
     });
   });
+
+  describe('save method', () => {
+    it('should call updateHero when save is called', () => {
+      mockHeroService.getHero.and.returnValue(of({ id: 2, name: 'Karol' }));
+      mockHeroService.updateHero.and.returnValue(of({}));
+      fixture.detectChanges();
+
+      component.save();
+
+      expect(mockHeroService.updateHero).toHaveBeenCalled();
+    });
+  });
 });
