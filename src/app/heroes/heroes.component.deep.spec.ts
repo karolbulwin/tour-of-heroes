@@ -8,22 +8,36 @@ import { Hero } from '../hero';
 // import { RouterTestingModule } from '@angular/router/testing';
 // import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { HeroService } from '../hero.service';
-import { Component, Input } from '@angular/core';
+import { Component, Input, Directive } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { HeroComponent } from '../hero/hero.component';
-import { RouterTestingModule } from '@angular/router/testing';
+// import { RouterTestingModule } from '@angular/router/testing';
+import { HeroCreateComponent } from '../hero-create/hero-create.component';
 
-describe('HeroesComponent (shallow)', () => {
+@Directive({
+  selector: '[routerLink]',
+  host: { '(click)': 'onClick()' }
+})
+export class RouterLinkDirectiveStub {
+  @Input('routerLink') linksParams: any;
+  navigateTo: any = null;
+
+  onClick() {
+    this.navigateTo = this.linksParams;
+  }
+}
+
+describe('HeroesComponent (deep)', () => {
   let component: HeroesComponent;
   let fixture: ComponentFixture<HeroesComponent>;
   let heroes: Hero[];
   let mockHeroService;
 
-  @Component({
-    selector: 'app-hero-create',
-    template: '<div></div>'
-  })
-  class FakeHeroCreateComponent {}
+  // @Component({
+  //   selector: 'app-hero-create',
+  //   template: '<div></div>'
+  // })
+  // class FakeHeroCreateComponent {}
 
   // @Component({
   //   selector: 'app-hero',
@@ -53,8 +67,13 @@ describe('HeroesComponent (shallow)', () => {
     ]);
 
     TestBed.configureTestingModule({
-      declarations: [HeroesComponent, FakeHeroCreateComponent, HeroComponent],
-      imports: [RouterTestingModule],
+      declarations: [
+        HeroesComponent,
+        HeroCreateComponent,
+        HeroComponent,
+        RouterLinkDirectiveStub
+      ],
+      // imports: [RouterTestingModule],
       providers: [{ provide: HeroService, useValue: mockHeroService }]
       // schemas: [NO_ERRORS_SCHEMA]
     });
@@ -62,6 +81,10 @@ describe('HeroesComponent (shallow)', () => {
 
     fixture = TestBed.createComponent(HeroesComponent);
     component = fixture.componentInstance;
+  });
+
+  afterEach(() => {
+    heroes = [];
   });
 
   it('should create', () => {
@@ -86,7 +109,7 @@ describe('HeroesComponent (shallow)', () => {
 
   describe('deleteHero method', () => {
     it('should call heroService.deleteHero when the Hero Components delete button is clicked', () => {
-      spyOn(fixture.componentInstance, 'deleteHero');
+      spyOn(component, 'deleteHero');
       mockHeroService.getHeroes.and.returnValue(of(heroes));
       const mockStopPropagation = jasmine.createSpyObj(['stopPropagation']);
 
@@ -100,25 +123,63 @@ describe('HeroesComponent (shallow)', () => {
         .triggerEventHandler('click', mockStopPropagation);
       // {stopPropagation: () => {}}
 
-      expect(fixture.componentInstance.deleteHero).toHaveBeenCalledWith(
-        heroes[0]
-      );
+      expect(component.deleteHero).toHaveBeenCalledWith(heroes[0]);
 
       // another version // raise event
       (heroComponentDEs[1].componentInstance as HeroComponent).deleteHero.emit(
         undefined
       );
 
-      expect(fixture.componentInstance.deleteHero).toHaveBeenCalledWith(
-        heroes[1]
-      );
+      expect(component.deleteHero).toHaveBeenCalledWith(heroes[1]);
 
       // another version // raise event using triggerEventHandler
       heroComponentDEs[2].triggerEventHandler('deleteHero', null);
 
-      expect(fixture.componentInstance.deleteHero).toHaveBeenCalledWith(
-        heroes[2]
-      );
+      expect(component.deleteHero).toHaveBeenCalledWith(heroes[2]);
     });
+  });
+
+  describe('addHero method', () => {
+    it('should add a new hero to the heroes list when the add button is clicked', () => {
+      // spyOn(component, 'addHero');
+      mockHeroService.getHeroes.and.returnValue(of(heroes));
+      const heroName = 'Karol';
+      mockHeroService.addHero.and.returnValue(of({ id: 1, name: heroName }));
+      fixture.detectChanges();
+
+      const heroCreateComponentDE = fixture.debugElement.query(
+        By.directive(HeroCreateComponent)
+      );
+
+      const inputElement = heroCreateComponentDE.query(By.css('input'))
+        .nativeElement;
+      const addButton = heroCreateComponentDE.query(By.css('button'));
+
+      inputElement.value = heroName;
+      addButton.triggerEventHandler('click', null);
+      fixture.detectChanges();
+
+      expect(component.heroes.length).toBe(11);
+      const heroText = fixture.debugElement.query(By.css('ul')).nativeElement
+        .textContent;
+      expect(heroText).toContain(heroName);
+      // expect(component.addHero).toHaveBeenCalledWith(heroName);
+    });
+  });
+
+  it('should have the correct route for the first hero', () => {
+    mockHeroService.getHeroes.and.returnValue(of(heroes));
+    fixture.detectChanges();
+    const heroComponentDEs = fixture.debugElement.queryAll(
+      By.directive(HeroComponent)
+    );
+
+    const routerLink = heroComponentDEs[0]
+      .query(By.directive(RouterLinkDirectiveStub))
+      .injector.get(RouterLinkDirectiveStub);
+
+    heroComponentDEs[0].query(By.css('a')).triggerEventHandler('click', null);
+
+    expect(routerLink.navigateTo).toBe('/detail/11');
   });
 });
